@@ -1,0 +1,11 @@
+# Dependencies
+node_modules/
+
+# Secrets — the Airtable token lives in Netlify env vars, NEVER in the repo
+.env
+.env.*
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+*.log

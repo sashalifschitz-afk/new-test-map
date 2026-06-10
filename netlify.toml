@@ -1,0 +1,12 @@
+# Netlify build configuration
+# On every deploy, Netlify installs dependencies, runs the build script
+# (which pulls fresh data from Airtable into public/map-data.json),
+# and serves the contents of the public/ folder.
+
+[build]
+  command = "npm run build"
+  publish = "public"
+
+# Use a current Node version for the build
+[build.environment]
+  NODE_VERSION = "20"

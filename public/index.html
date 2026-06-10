@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Impact Commercial Group — Texas Commercial Real Estate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Inter+Tight:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0a0a0a;
+    --ink-soft: #1a1a1a;
+    --paper: #f4f1ec;
+    --paper-warm: #ebe6dd;
+    --rule: rgba(10,10,10,0.12);
+    --muted: rgba(10,10,10,0.55);
+    --serif: 'Fraunces', 'Times New Roman', serif;
+    --sans: 'Inter Tight', system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--paper);
+    color: var(--ink);
+    font-weight: 400;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* ===== NAV =====
+     Rule: nav elements are WHITE by default (over the dark hero image),
+     and flip to BLACK when the nav scrolls onto the cream background.
+     The compass PNG ships in white; we invert it on scroll.
+  */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.5rem 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: transparent;
+    transition: background 0.4s ease, padding 0.4s ease, border-color 0.4s ease;
+    border-bottom: 1px solid transparent;
+  }
+  nav.scrolled {
+    background: rgba(244, 241, 236, 0.94);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 1rem 2.5rem;
+    border-bottom-color: var(--rule);
+  }
+  nav .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    text-decoration: none;
+  }
+  /* Compass: white asset by default → invert to black on scroll */
+  nav .brand img.compass {
+    height: 32px;
+    width: auto;
+    transition: filter 0.4s ease;
+  }
+  nav.scrolled .brand img.compass {
+    filter: invert(1);
+  }
+  /* Menu links: white over hero, black on cream */
+  nav ul {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+  nav ul a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 500;
+    transition: color 0.3s ease, opacity 0.3s ease;
+    position: relative;
+  }
+  nav.scrolled ul a {
+    color: var(--ink);
+  }
+  nav ul a:hover { opacity: 0.6; }
+  nav ul a.cta {
+    border: 1px solid currentColor;
+    padding: 0.55rem 1.1rem;
+    transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+  nav ul a.cta:hover {
+    background: #ffffff;
+    color: var(--ink);
+    opacity: 1;
+  }
+  nav.scrolled ul a.cta:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    position: relative;
+    height: 100vh;
+    min-height: 720px;
+    overflow: hidden;
+    color: #fff;
+  }
+  .hero-img {
+    position: absolute;
+    inset: 0;
+    background-image: url('https://images.unsplash.com/photo-1531218150217-54595bc2b934?auto=format&fit=crop&w=2400&q=80');
+    background-size: cover;
+    background-position: center 60%;
+    transform: scale(1.05);
+    animation: heroZoom 24s ease-out forwards;
+  }
+  .hero-img::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 30%, rgba(0,0,0,0.65) 100%);
+  }
+  @keyframes heroZoom {
+    from { transform: scale(1.12); }
+    to { transform: scale(1.0); }
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 2.5rem 5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .hero-eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    opacity: 0.85;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    opacity: 0;
+    animation: fadeUp 1.2s ease-out 0.3s forwards;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    width: 60px;
+    height: 1px;
+    background: #fff;
+    display: inline-block;
+  }
+  .hero h1 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(3rem, 7.5vw, 7.5rem);
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+    max-width: 14ch;
+    opacity: 0;
+    animation: fadeUp 1.4s ease-out 0.5s forwards;
+  }
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 300;
+  }
+  .hero-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 3rem;
+    opacity: 0;
+    animation: fadeUp 1.2s ease-out 0.9s forwards;
+  }
+  .hero-sub {
+    font-size: 0.95rem;
+    max-width: 32ch;
+    line-height: 1.6;
+    opacity: 0.92;
+  }
+  .hero-scroll {
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  .hero-scroll::after {
+    content: '';
+    width: 1px;
+    height: 50px;
+    background: #fff;
+    animation: scrollLine 2s ease-in-out infinite;
+    transform-origin: top;
+  }
+  @keyframes scrollLine {
+    0%, 100% { transform: scaleY(0.3); }
+    50% { transform: scaleY(1); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== AFFILIATION STRIP ===== */
+  .affiliation {
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
+    padding: 1.75rem 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .affiliation img {
+    height: 28px;
+    width: auto;
+    opacity: 0.75;
+    transition: opacity 0.3s ease;
+  }
+  .affiliation img:hover { opacity: 1; }
+
+  /* ===== SECTIONS ===== */
+  section {
+    padding: 8rem 2.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .section-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 3rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .section-label::before {
+    content: '';
+    width: 40px;
+    height: 1px;
+    background: var(--ink);
+    opacity: 0.4;
+  }
+
+  /* ===== PHILOSOPHY ===== */
+  .philosophy {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 6rem;
+    align-items: start;
+  }
+  .philosophy h2 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(2.2rem, 4.2vw, 3.8rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+  .philosophy h2 em {
+    font-style: italic;
+    font-weight: 300;
+  }
+  .philosophy-body p {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    margin-bottom: 1.5rem;
+    max-width: 58ch;
+  }
+  .philosophy-body p:first-child::first-letter {
+    font-family: var(--serif);
+    font-size: 3.6rem;
+    float: left;
+    line-height: 0.9;
+    margin: 0.15rem 0.6rem 0 0;
+    font-weight: 400;
+  }
+
+  /* ===== APPROACH (tandem responsibilities) ===== */
+  .approach {
+    background: var(--paper-warm);
+    padding: 8rem 0;
+    margin: 0;
+    max-width: none;
+  }
+  .approach-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2.5rem;
+  }
+  .approach-header {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 6rem;
+    margin-bottom: 5rem;
+    align-items: end;
+  }
+  .approach-header h2 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(2.2rem, 4.2vw, 3.8rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+  .approach-header h2 em { font-style: italic; }
+  .approach-header p {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    max-width: 56ch;
+    color: var(--ink-soft);
+  }
+  .responsibilities {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    border-top: 1px solid var(--ink);
+  }
+  .resp {
+    padding: 2.5rem 1.5rem 2.5rem 0;
+    border-right: 1px solid var(--rule);
+    transition: background 0.4s ease;
+  }
+  .resp:last-child { border-right: none; }
+  .resp:hover { background: rgba(10,10,10,0.04); }
+  .resp-num {
+    font-family: var(--serif);
+    font-size: 0.95rem;
+    font-style: italic;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+  .resp-title {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 1.5rem;
+    margin-bottom: 0.8rem;
+    letter-spacing: -0.01em;
+  }
+  .resp-desc {
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+
+  /* ===== LEADERSHIP TEAM ===== */
+  .team-section { padding-bottom: 6rem; }
+  .team-header {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 6rem;
+    margin-bottom: 5rem;
+    align-items: end;
+  }
+  .team-header h2 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(2.2rem, 4.2vw, 3.8rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+  .team-header h2 em { font-style: italic; }
+  .team-header p {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    max-width: 56ch;
+    color: var(--ink-soft);
+  }
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3rem 2.5rem;
+  }
+  .member { cursor: pointer; }
+  .member-img {
+    aspect-ratio: 4/5;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    background: var(--ink);
+    position: relative;
+  }
+  .member-img::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.25) 100%);
+    pointer-events: none;
+  }
+  .member-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s ease, filter 0.6s ease;
+    filter: grayscale(0.15);
+  }
+  .member:hover .member-img img {
+    transform: scale(1.04);
+    filter: grayscale(0);
+  }
+  .member-name {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 1.5rem;
+    margin-bottom: 0.3rem;
+    letter-spacing: -0.01em;
+  }
+  .member-role {
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+  .member-pitch {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    max-width: 38ch;
+  }
+
+  /* ===== TEXAS / MAP TEASER ===== */
+  .texas {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 8rem 0;
+    margin: 0;
+    max-width: none;
+    position: relative;
+    overflow: hidden;
+  }
+  .texas-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 6rem;
+    align-items: center;
+  }
+  .texas .section-label { color: rgba(244,241,236,0.55); }
+  .texas .section-label::before { background: var(--paper); opacity: 0.4; }
+  .texas h2 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(2.4rem, 4.5vw, 4.2rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    margin-bottom: 2rem;
+  }
+  .texas h2 em { font-style: italic; }
+  .texas p {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    max-width: 50ch;
+    color: rgba(244,241,236,0.78);
+    margin-bottom: 2.5rem;
+  }
+  .texas-stats {
+    display: flex;
+    gap: 3rem;
+    border-top: 1px solid rgba(244,241,236,0.18);
+    padding-top: 2rem;
+  }
+  .stat-num {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: 2.6rem;
+    line-height: 1;
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+  .stat-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(244,241,236,0.55);
+  }
+  .texas-map {
+    aspect-ratio: 4/3;
+    position: relative;
+    background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+    border: 1px solid rgba(244,241,236,0.12);
+    overflow: hidden;
+  }
+  .texas-map svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .pin {
+    transform-origin: center;
+    animation: pinPulse 3s ease-in-out infinite;
+  }
+  .pin:nth-child(2) { animation-delay: 0.4s; }
+  .pin:nth-child(3) { animation-delay: 0.8s; }
+  .pin:nth-child(4) { animation-delay: 1.2s; }
+  .pin:nth-child(5) { animation-delay: 1.6s; }
+  .pin:nth-child(6) { animation-delay: 2.0s; }
+  @keyframes pinPulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+  .map-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--paper);
+    text-decoration: none;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid rgba(244,241,236,0.5);
+    transition: border-color 0.3s, gap 0.3s;
+  }
+  .map-cta:hover { gap: 1.2rem; border-color: var(--paper); }
+
+  /* ===== LISTINGS PREVIEW ===== */
+  .listings-header {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 6rem;
+    margin-bottom: 4rem;
+    align-items: end;
+  }
+  .listings-header h2 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(2.2rem, 4.2vw, 3.8rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+  .listings-header h2 em { font-style: italic; }
+  .listings-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+  }
+  .listing {
+    cursor: pointer;
+  }
+  .listing-img {
+    aspect-ratio: 4/3;
+    overflow: hidden;
+    margin-bottom: 1.2rem;
+    background: var(--paper-warm);
+  }
+  .listing-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1s ease;
+  }
+  .listing:hover .listing-img img {
+    transform: scale(1.05);
+  }
+  .listing-tag {
+    font-size: 0.68rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .listing-tag.sold { color: var(--ink); }
+  .listing-name {
+    font-family: var(--serif);
+    font-size: 1.25rem;
+    font-weight: 400;
+    margin-bottom: 0.3rem;
+    letter-spacing: -0.01em;
+  }
+  .listing-meta {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  /* ===== CTA / CONTACT ===== */
+  .contact {
+    padding: 10rem 2.5rem;
+    text-align: center;
+    border-top: 1px solid var(--rule);
+  }
+  .contact .section-label {
+    justify-content: center;
+  }
+  .contact .section-label::before { content: none; }
+  .contact h2 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(2.6rem, 5.5vw, 5rem);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    margin-bottom: 2.5rem;
+    max-width: 18ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .contact h2 em { font-style: italic; }
+  .contact-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.1rem 2.5rem;
+    background: var(--ink);
+    color: var(--paper);
+    text-decoration: none;
+    font-size: 0.78rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    transition: gap 0.3s, transform 0.3s;
+  }
+  .contact-cta:hover { gap: 1.6rem; transform: translateY(-2px); }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 5rem 2.5rem 2rem;
+  }
+  .footer-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 4rem;
+    padding-bottom: 4rem;
+    border-bottom: 1px solid rgba(244,241,236,0.15);
+  }
+  .footer-brand .lockup {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-bottom: 1.5rem;
+  }
+  .footer-brand .lockup img.compass {
+    height: 44px;
+    width: auto;
+  }
+  .footer-brand p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: rgba(244,241,236,0.65);
+    max-width: 36ch;
+  }
+  .footer-col h4 {
+    font-size: 0.7rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(244,241,236,0.55);
+    margin-bottom: 1.2rem;
+    font-weight: 500;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col li { margin-bottom: 0.6rem; }
+  .footer-col a {
+    color: var(--paper);
+    text-decoration: none;
+    font-size: 0.92rem;
+    transition: opacity 0.3s;
+  }
+  .footer-col a:hover { opacity: 0.6; }
+  .footer-bottom {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-top: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    font-size: 0.78rem;
+    color: rgba(244,241,236,0.5);
+  }
+  .footer-bottom .legal {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .footer-bottom .affiliation-mark {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .footer-bottom .affiliation-mark img {
+    height: 22px;
+    width: auto;
+    filter: invert(1);
+    opacity: 0.7;
+  }
+
+  /* ===== SCROLL REVEAL ===== */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+  .reveal.in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    nav ul { display: none; }
+    section { padding: 5rem 1.5rem; }
+    .hero-content { padding: 0 1.5rem 3rem; }
+    .philosophy, .approach-header, .team-header, .listings-header, .texas-inner {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+    .responsibilities {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .resp { border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 2rem 1.2rem; }
+    .resp:nth-child(2n) { border-right: none; }
+    .team-grid, .listings-grid {
+      grid-template-columns: 1fr;
+    }
+    .texas-stats { flex-wrap: wrap; gap: 2rem; }
+    .footer-inner { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+    .footer-bottom { flex-direction: column; gap: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav id="mainNav">
+  <a href="#" class="brand" aria-label="Impact Commercial Group home">
+    <img class="compass" src="https://res.cloudinary.com/duliamaop/image/upload/v1763937355/Transparent_White_Compass_Logo_lscvob.png" alt="Impact Commercial Group" />
+  </a>
+  <ul>
+    <li><a href="#approach">Approach</a></li>
+    <li><a href="#team">Leadership</a></li>
+    <li><a href="#listings">Properties</a></li>
+    <li><a href="map.html">Map</a></li>
+    <li><a href="#contact" class="cta">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-img"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Texas Commercial Real Estate</div>
+    <h1>Local knowledge, <em>uncommon</em> in execution.</h1>
+    <div class="hero-meta">
+      <p class="hero-sub">A boutique advisory practice serving owners, investors, and tenants across the State of Texas — guided by a coordinated team of specialists.</p>
+      <div class="hero-scroll">Scroll</div>
+    </div>
+  </div>
+</header>
+
+<!-- AFFILIATION STRIP -->
+<div class="affiliation" aria-label="Affiliated with the Compass network">
+  <img src="https://res.cloudinary.com/duliamaop/image/upload/v1763518771/Logo_-_ICG_-_Transparenrt_gy3cxx.png" alt="Compass network" />
+</div>
+
+<!-- PHILOSOPHY -->
+<section class="philosophy">
+  <div class="reveal">
+    <div class="section-label">Our Philosophy</div>
+    <h2>A practice built on <em>specialization</em>, not generalization.</h2>
+  </div>
+  <div class="philosophy-body reveal">
+    <p>Most commercial real estate transactions are run by a single broker juggling every function. We work differently. At Impact Commercial Group, each transaction is supported by a team of specialists — each accountable for a distinct discipline — working in tandem on the client's behalf.</p>
+    <p>The result is a deeper standard of care: more rigorous valuations, sharper marketing, more prepared negotiations, and better-informed counsel from start to close. It is the way we believe commercial real estate should be practiced.</p>
+  </div>
+</section>
+
+<!-- APPROACH / RESPONSIBILITIES -->
+<section class="approach reveal">
+  <div class="approach-inner">
+    <div class="approach-header">
+      <h2>Five disciplines, <em>one team.</em></h2>
+      <p>Every engagement draws on the same five core competencies. Each is owned by a dedicated member of our Leadership Team — so nothing is improvised, and nothing is overlooked.</p>
+    </div>
+    <div class="responsibilities">
+      <div class="resp">
+        <span class="resp-num">i.</span>
+        <h3 class="resp-title">Valuation</h3>
+        <p class="resp-desc">Rigorous, defensible pricing grounded in comparable sales, replacement cost, and income analysis.</p>
+      </div>
+      <div class="resp">
+        <span class="resp-num">ii.</span>
+        <h3 class="resp-title">Marketing</h3>
+        <p class="resp-desc">Original materials, deliberate exposure, and a marketing process that reflects the asset's quality.</p>
+      </div>
+      <div class="resp">
+        <span class="resp-num">iii.</span>
+        <h3 class="resp-title">Negotiation</h3>
+        <p class="resp-desc">Disciplined advocacy at the table — informed by data, tempered by experience.</p>
+      </div>
+      <div class="resp">
+        <span class="resp-num">iv.</span>
+        <h3 class="resp-title">Research</h3>
+        <p class="resp-desc">Deep, ongoing market intelligence across Texas metros — submarkets, tenants, owners, and trends.</p>
+      </div>
+      <div class="resp">
+        <span class="resp-num">v.</span>
+        <h3 class="resp-title">Presentation</h3>
+        <p class="resp-desc">Clear, considered communication with clients, counterparties, and capital — at every step.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LEADERSHIP TEAM -->
+<section id="team" class="team-section">
+  <div class="team-header">
+    <div class="reveal">
+      <div class="section-label">Leadership Team</div>
+      <h2>The team <em>around the table.</em></h2>
+    </div>
+    <p class="reveal">Each member of our Leadership Team owns a specific responsibility within the firm. Together, they form the coordinated practice that defines the way we serve our clients.</p>
+  </div>
+
+  <div class="team-grid">
+    <div class="member reveal">
+      <div class="member-img">
+        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=800&q=80" alt="" />
+      </div>
+      <h3 class="member-name">[Name]</h3>
+      <div class="member-role">Valuation</div>
+      <p class="member-pitch">Leads pricing strategy and underwriting across the firm — pairing comparable analysis with income and replacement-cost rigor on every assignment.</p>
+    </div>
+    <div class="member reveal">
+      <div class="member-img">
+        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80" alt="" />
+      </div>
+      <h3 class="member-name">[Name]</h3>
+      <div class="member-role">Marketing</div>
+      <p class="member-pitch">Directs how each property is positioned and presented — from original creative through targeted exposure to qualified principals and brokers.</p>
+    </div>
+    <div class="member reveal">
+      <div class="member-img">
+        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=800&q=80" alt="" />
+      </div>
+      <h3 class="member-name">[Name]</h3>
+      <div class="member-role">Negotiation</div>
+      <p class="member-pitch">Anchors the firm at the negotiating table — bringing decades of transactional experience to terms, structure, and execution.</p>
+    </div>
+    <div class="member reveal">
+      <div class="member-img">
+        <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=800&q=80" alt="" />
+      </div>
+      <h3 class="member-name">[Name]</h3>
+      <div class="member-role">Research</div>
+      <p class="member-pitch">Heads market intelligence across Texas — tracking submarket dynamics, ownership patterns, and tenant demand to inform every engagement.</p>
+    </div>
+    <div class="member reveal">
+      <div class="member-img">
+        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80" alt="" />
+      </div>
+      <h3 class="member-name">[Name]</h3>
+      <div class="member-role">Presentation</div>
+      <p class="member-pitch">Shapes how the firm communicates with clients and counterparties — ensuring every interaction reflects the quality of the underlying work.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TEXAS / MAP -->
+<section id="texas" class="texas reveal">
+  <div class="texas-inner">
+    <div>
+      <div class="section-label">The State of Texas</div>
+      <h2>Rooted in <em>Texas.</em> Every assignment, every market.</h2>
+      <p>From the Hill Country to the Gulf Coast, from the Metroplex to the Trans-Pecos — we work exclusively in Texas, and our practice reflects that focus. Explore our active listings and recent closings across the state.</p>
+      <div class="texas-stats">
+        <div>
+          <span class="stat-num">100%</span>
+          <span class="stat-label">Texas Focused</span>
+        </div>
+        <div>
+          <span class="stat-num">5</span>
+          <span class="stat-label">Core Disciplines</span>
+        </div>
+        <div>
+          <span class="stat-num">1</span>
+          <span class="stat-label">Coordinated Team</span>
+        </div>
+      </div>
+      <br/><br/>
+      <a href="map.html" class="map-cta">Explore the Full Map →</a>
+    </div>
+
+    <div class="texas-map">
+      <!-- Stylized Texas outline with pins -->
+      <svg viewBox="0 0 400 380" xmlns="http://www.w3.org/2000/svg" aria-label="Map of Texas with active listings, sold/leased, tenant- and buyer-represented pins">
+        <!-- Texas silhouette (simplified) -->
+        <path d="M 75 80
+                 L 90 70 L 130 65 L 175 60 L 220 55 L 250 58 L 270 65
+                 L 275 80 L 285 95 L 295 105 L 310 115 L 320 130
+                 L 325 150 L 330 175 L 325 200 L 315 220 L 305 235
+                 L 290 250 L 270 265 L 245 275 L 220 285 L 200 295
+                 L 180 310 L 160 320 L 140 315 L 125 305 L 115 290
+                 L 105 270 L 95 245 L 85 215 L 80 185 L 75 155
+                 L 72 125 L 73 100 Z"
+              fill="none"
+              stroke="rgba(244,241,236,0.28)"
+              stroke-width="1"
+              stroke-linejoin="round" />
+
+        <!-- Grid lines for atmosphere -->
+        <g stroke="rgba(244,241,236,0.05)" stroke-width="0.5">
+          <line x1="0" y1="90" x2="400" y2="90" />
+          <line x1="0" y1="180" x2="400" y2="180" />
+          <line x1="0" y1="270" x2="400" y2="270" />
+          <line x1="100" y1="0" x2="100" y2="380" />
+          <line x1="200" y1="0" x2="200" y2="380" />
+          <line x1="300" y1="0" x2="300" y2="380" />
+        </g>
+
+        <!-- Active listings (filled white circle with halo) -->
+        <g>
+          <circle class="pin" cx="195" cy="155" r="5" fill="#f4f1ec" />
+          <circle cx="195" cy="155" r="10" fill="none" stroke="#f4f1ec" stroke-width="0.5" opacity="0.4" />
+        </g>
+        <g>
+          <circle class="pin" cx="240" cy="115" r="5" fill="#f4f1ec" />
+          <circle cx="240" cy="115" r="10" fill="none" stroke="#f4f1ec" stroke-width="0.5" opacity="0.4" />
+        </g>
+
+        <!-- Sold / leased (outlined circle) -->
+        <circle class="pin" cx="155" cy="240" r="4" fill="none" stroke="#f4f1ec" stroke-width="1.2" />
+        <circle class="pin" cx="210" cy="180" r="4" fill="none" stroke="#f4f1ec" stroke-width="1.2" />
+        <circle class="pin" cx="180" cy="135" r="4" fill="none" stroke="#f4f1ec" stroke-width="1.2" />
+
+        <!-- Tenants represented (filled diamond) -->
+        <g class="pin">
+          <rect x="167" y="192" width="8" height="8" fill="#f4f1ec" transform="rotate(45 171 196)" />
+        </g>
+        <g class="pin">
+          <rect x="221" y="221" width="8" height="8" fill="#f4f1ec" transform="rotate(45 225 225)" />
+        </g>
+
+        <!-- Buyers represented (outlined diamond) -->
+        <g class="pin">
+          <rect x="146" y="166" width="8" height="8" fill="none" stroke="#f4f1ec" stroke-width="1.2" transform="rotate(45 150 170)" />
+        </g>
+        <g class="pin">
+          <rect x="256" y="146" width="8" height="8" fill="none" stroke="#f4f1ec" stroke-width="1.2" transform="rotate(45 260 150)" />
+        </g>
+
+        <!-- Legend -->
+        <g transform="translate(20, 348)" font-family="Inter Tight, sans-serif" font-size="7.5" fill="rgba(244,241,236,0.7)" letter-spacing="1.4">
+          <!-- Active -->
+          <circle cx="6" cy="0" r="3.5" fill="#f4f1ec" />
+          <text x="15" y="3">ACTIVE</text>
+
+          <!-- Sold / Leased -->
+          <circle cx="72" cy="0" r="3" fill="none" stroke="#f4f1ec" stroke-width="1" />
+          <text x="81" y="3">SOLD / LEASED</text>
+
+          <!-- Tenant represented -->
+          <rect x="170" y="-3" width="6" height="6" fill="#f4f1ec" transform="rotate(45 173 0)" />
+          <text x="183" y="3">TENANT REP</text>
+
+          <!-- Buyer represented -->
+          <rect x="252" y="-3" width="6" height="6" fill="none" stroke="#f4f1ec" stroke-width="1" transform="rotate(45 255 0)" />
+          <text x="265" y="3">BUYER REP</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- LISTINGS -->
+<section id="listings">
+  <div class="listings-header">
+    <div class="reveal">
+      <div class="section-label">Featured Properties</div>
+      <h2>Active <em>and recent.</em></h2>
+    </div>
+    <p class="reveal" style="font-size:1.05rem;line-height:1.7;max-width:56ch;color:var(--ink-soft);">A selection of current listings and notable closings — representative of our practice across office, retail, industrial, and land assignments throughout Texas.</p>
+  </div>
+  <div class="listings-grid">
+    <div class="listing reveal">
+      <div class="listing-img">
+        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1000&q=80" alt="" />
+      </div>
+      <div class="listing-tag">For Lease · Office</div>
+      <h3 class="listing-name">[Property Name]</h3>
+      <p class="listing-meta">Austin, TX · 24,500 SF</p>
+    </div>
+    <div class="listing reveal">
+      <div class="listing-img">
+        <img src="https://images.unsplash.com/photo-1565008447742-97f6f38c985c?auto=format&fit=crop&w=1000&q=80" alt="" />
+      </div>
+      <div class="listing-tag">For Sale · Industrial</div>
+      <h3 class="listing-name">[Property Name]</h3>
+      <p class="listing-meta">Houston, TX · 112,000 SF</p>
+    </div>
+    <div class="listing reveal">
+      <div class="listing-img">
+        <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?auto=format&fit=crop&w=1000&q=80" alt="" />
+      </div>
+      <div class="listing-tag sold">Sold · Retail</div>
+      <h3 class="listing-name">[Property Name]</h3>
+      <p class="listing-meta">Dallas, TX · Closed 2026</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="contact reveal">
+  <div class="section-label">Begin a Conversation</div>
+  <h2>Let's discuss your <em>property</em>, your portfolio, or your next move.</h2>
+  <a href="mailto:hello@icg.example" class="contact-cta">Contact the Team →</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="lockup">
+        <img class="compass" src="https://res.cloudinary.com/duliamaop/image/upload/v1763937355/Transparent_White_Compass_Logo_lscvob.png" alt="Impact Commercial Group" />
+      </div>
+      <p>A boutique commercial real estate advisory practice serving the State of Texas.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Practice</h4>
+      <ul>
+        <li><a href="#approach">Approach</a></li>
+        <li><a href="#team">Leadership</a></li>
+        <li><a href="#listings">Properties</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Map</h4>
+      <ul>
+        <li><a href="map.html">Active Listings</a></li>
+        <li><a href="map.html">Closings</a></li>
+        <li><a href="#">Search Properties</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="mailto:hello@icg.example">hello@icg.example</a></li>
+        <li><a href="tel:5125550100">(512) 555-0100</a></li>
+        <li><a href="#">Austin · Dallas · Houston</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="legal">
+      <span>© 2026 Impact Commercial Group. All rights reserved.</span>
+      <span>Texas Real Estate Commission · Information About Brokerage Services</span>
+    </div>
+    <div class="affiliation-mark">
+      <img src="https://res.cloudinary.com/duliamaop/image/upload/v1763518771/Logo_-_ICG_-_Transparenrt_gy3cxx.png" alt="Compass network" />
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Nav background on scroll
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 80) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+  reveals.forEach(r => io.observe(r));
+</script>
+
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "impact-commercial-map",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Impact Commercial Group property map. Static site; map pins are built from Airtable at deploy time.",
+  "scripts": {
+    "build": "node scripts/build-map-data.js"
+  },
+  "dependencies": {
+    "airtable": "^0.12.2"
+  }
+}
