@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Properties Map — Impact Commercial Group</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Inter+Tight:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""/>
+<style>
+  :root {
+    --ink: #0a0a0a;
+    --ink-soft: #1a1a1a;
+    --paper: #f4f1ec;
+    --paper-warm: #ebe6dd;
+    --rule: rgba(10,10,10,0.12);
+    --muted: rgba(10,10,10,0.55);
+    --serif: 'Fraunces', 'Times New Roman', serif;
+    --sans: 'Inter Tight', system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--sans);
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== NAV ===== */
+  nav.site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2.5rem;
+    background: rgba(244, 241, 236, 0.94);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--rule);
+  }
+  nav.site-nav .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    text-decoration: none;
+  }
+  nav.site-nav .brand img.compass {
+    height: 30px;
+    width: auto;
+    filter: invert(1);
+  }
+  nav.site-nav ul {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+    align-items: center;
+  }
+  nav.site-nav ul a {
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 500;
+    transition: opacity 0.3s ease;
+  }
+  nav.site-nav ul a:hover { opacity: 0.6; }
+  nav.site-nav ul a.current {
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 2px;
+  }
+  nav.site-nav ul a.cta {
+    border: 1px solid var(--ink);
+    padding: 0.55rem 1.1rem;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  nav.site-nav ul a.cta:hover {
+    background: var(--ink);
+    color: var(--paper);
+    opacity: 1;
+  }
+  @media (max-width: 900px) {
+    nav.site-nav { padding: 0.85rem 1.5rem; }
+    nav.site-nav ul { gap: 1.25rem; }
+    nav.site-nav ul li.hide-mobile { display: none; }
+  }
+
+  /* ===== PAGE HEADER ===== */
+  .page-header {
+    padding: 3rem 2.5rem 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .page-eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .page-eyebrow::before {
+    content: '';
+    width: 40px;
+    height: 1px;
+    background: var(--ink);
+    opacity: 0.4;
+  }
+  .page-header h1 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(2.5rem, 5vw, 4.2rem);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    margin-bottom: 1rem;
+    max-width: 20ch;
+  }
+  .page-header h1 em { font-style: italic; }
+  .page-header p {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    max-width: 60ch;
+  }
+
+  /* ===== MAP CONTAINER ===== */
+  .map-wrap {
+    max-width: 1400px;
+    margin: 0 auto 4rem;
+    padding: 0 2.5rem;
+  }
+  .map-shell {
+    background: var(--ink);
+    border: 1px solid var(--rule);
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    min-height: 640px;
+    position: relative;
+  }
+  .controls {
+    padding: 2rem 1.5rem;
+    color: var(--paper);
+    border-right: 1px solid rgba(244,241,236,0.12);
+    overflow-y: auto;
+  }
+  .controls h3 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 1.3rem;
+    margin-bottom: 0.4rem;
+    letter-spacing: -0.01em;
+  }
+  .controls .sub {
+    font-size: 0.78rem;
+    color: rgba(244,241,236,0.55);
+    margin-bottom: 1.75rem;
+    line-height: 1.55;
+  }
+  .filter-section {
+    margin-bottom: 2rem;
+  }
+  .filter-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(244,241,236,0.5);
+    margin-bottom: 0.85rem;
+  }
+  .filter-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(244,241,236,0.08);
+    transition: opacity 0.2s ease;
+  }
+  .filter-toggle:last-child { border-bottom: none; }
+  .filter-toggle.off { opacity: 0.35; }
+  .filter-toggle input { display: none; }
+  .filter-swatch {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .swatch-circle-filled {
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--paper);
+  }
+  .swatch-circle-outline {
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 1.5px solid var(--paper);
+  }
+  .swatch-diamond-filled {
+    width: 12px; height: 12px;
+    background: var(--paper);
+    transform: rotate(45deg);
+  }
+  .swatch-diamond-outline {
+    width: 12px; height: 12px;
+    border: 1.5px solid var(--paper);
+    transform: rotate(45deg);
+  }
+  .filter-text { flex: 1; }
+  .filter-name {
+    font-size: 0.88rem;
+    font-weight: 500;
+    margin-bottom: 0.15rem;
+  }
+  .filter-count {
+    font-size: 0.72rem;
+    color: rgba(244,241,236,0.55);
+  }
+
+  /* ===== MAP ===== */
+  #map {
+    width: 100%;
+    height: 100%;
+    min-height: 640px;
+    background: #1a1a1a;
+  }
+  /* Tone down the default Leaflet map tiles so they don't overpower brand */
+  .leaflet-tile-pane { filter: grayscale(0.6) contrast(0.95) brightness(0.95); }
+  .leaflet-container {
+    font-family: var(--sans);
+    background: #1a1a1a;
+  }
+
+  /* Custom pin styles */
+  .pin-icon {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .pin-icon .dot-filled {
+    width: 14px; height: 14px; border-radius: 50%;
+    background: #0a0a0a;
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.4);
+  }
+  .pin-icon .dot-outline {
+    width: 14px; height: 14px; border-radius: 50%;
+    background: #ffffff;
+    border: 2px solid #0a0a0a;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.7), 0 2px 8px rgba(0,0,0,0.4);
+  }
+  .pin-icon .diamond-filled {
+    width: 12px; height: 12px;
+    background: #0a0a0a;
+    border: 2px solid #ffffff;
+    transform: rotate(45deg);
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.4);
+  }
+  .pin-icon .diamond-outline {
+    width: 12px; height: 12px;
+    background: #ffffff;
+    border: 2px solid #0a0a0a;
+    transform: rotate(45deg);
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.7), 0 2px 8px rgba(0,0,0,0.4);
+  }
+
+  /* Popup */
+  .leaflet-popup-content-wrapper {
+    border-radius: 0;
+    padding: 0;
+    background: var(--paper);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+  }
+  .leaflet-popup-content {
+    margin: 0;
+    width: 280px !important;
+    font-family: var(--sans);
+  }
+  .leaflet-popup-tip {
+    background: var(--paper);
+  }
+  .popup-img {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    background: var(--paper-warm);
+    display: block;
+  }
+  .popup-body {
+    padding: 1rem 1.1rem 1.1rem;
+  }
+  .popup-tag {
+    font-size: 0.65rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .popup-title {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 1.15rem;
+    line-height: 1.25;
+    margin-bottom: 0.4rem;
+    letter-spacing: -0.01em;
+  }
+  .popup-meta {
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    margin-bottom: 0.5rem;
+  }
+  .popup-detail {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ===== INTEGRATION CALLOUT ===== */
+  .integration {
+    max-width: 1400px;
+    margin: 0 auto 5rem;
+    padding: 0 2.5rem;
+  }
+  .integration-card {
+    background: var(--paper-warm);
+    border: 1px solid var(--rule);
+    padding: 2.5rem;
+  }
+  .integration-card h2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+  }
+  .integration-card .sub {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+  }
+  .integration-card ol {
+    padding-left: 1.3rem;
+    margin-bottom: 1.5rem;
+  }
+  .integration-card li {
+    margin-bottom: 0.7rem;
+    line-height: 1.65;
+    font-size: 0.95rem;
+  }
+  .integration-card code {
+    font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Courier New', monospace;
+    font-size: 0.85em;
+    background: rgba(10,10,10,0.07);
+    padding: 0.1em 0.4em;
+    border-radius: 3px;
+  }
+  pre {
+    background: var(--ink);
+    color: #e8e6e2;
+    padding: 1.5rem;
+    overflow-x: auto;
+    font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Courier New', monospace;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    border-left: 3px solid #c8a96a;
+  }
+  pre .comment { color: #8a9a8a; font-style: italic; }
+  pre .key { color: #c8a96a; }
+  pre .string { color: #e8c285; }
+
+  @media (max-width: 900px) {
+    .map-shell {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 480px;
+    }
+    .controls {
+      border-right: none;
+      border-bottom: 1px solid rgba(244,241,236,0.12);
+      max-height: 320px;
+    }
+    .page-header, .map-wrap, .integration { padding-left: 1.5rem; padding-right: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="index.html" class="brand" aria-label="Impact Commercial Group home">
+    <img class="compass" src="https://res.cloudinary.com/duliamaop/image/upload/v1763937355/Transparent_White_Compass_Logo_lscvob.png" alt="Impact Commercial Group" />
+  </a>
+  <ul>
+    <li class="hide-mobile"><a href="index.html#approach">Approach</a></li>
+    <li class="hide-mobile"><a href="index.html#team">Leadership</a></li>
+    <li class="hide-mobile"><a href="index.html#listings">Properties</a></li>
+    <li><a href="map.html" class="current">Map</a></li>
+    <li><a href="index.html#contact" class="cta">Contact</a></li>
+  </ul>
+</nav>
+
+<header class="page-header">
+  <div class="page-eyebrow">Properties &amp; Representations</div>
+  <h1>Our work, <em>across Texas.</em></h1>
+  <p>Active listings, recent closings, and the tenants and buyers we have represented &mdash; plotted across the state. Toggle the categories at left to focus the view.</p>
+</header>
+
+<section class="map-wrap">
+  <div class="map-shell">
+    <aside class="controls">
+      <h3>Map Layers</h3>
+      <p class="sub">Tap any category to show or hide those pins. Click a pin for transaction detail.</p>
+
+      <div class="filter-section">
+        <div class="filter-label">Properties</div>
+        <label class="filter-toggle" data-layer="active-sale">
+          <input type="checkbox" checked />
+          <span class="filter-swatch"><span class="swatch-circle-filled"></span></span>
+          <span class="filter-text">
+            <div class="filter-name">Active &mdash; For Sale</div>
+            <div class="filter-count" data-count="active-sale">—</div>
+          </span>
+        </label>
+        <label class="filter-toggle" data-layer="active-lease">
+          <input type="checkbox" checked />
+          <span class="filter-swatch"><span class="swatch-circle-filled"></span></span>
+          <span class="filter-text">
+            <div class="filter-name">Active &mdash; For Lease</div>
+            <div class="filter-count" data-count="active-lease">—</div>
+          </span>
+        </label>
+        <label class="filter-toggle" data-layer="closed-sale">
+          <input type="checkbox" checked />
+          <span class="filter-swatch"><span class="swatch-circle-outline"></span></span>
+          <span class="filter-text">
+            <div class="filter-name">Sold</div>
+            <div class="filter-count" data-count="closed-sale">—</div>
+          </span>
+        </label>
+        <label class="filter-toggle" data-layer="closed-lease">
+          <input type="checkbox" checked />
+          <span class="filter-swatch"><span class="swatch-circle-outline"></span></span>
+          <span class="filter-text">
+            <div class="filter-name">Leased</div>
+            <div class="filter-count" data-count="closed-lease">—</div>
+          </span>
+        </label>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-label">Representations</div>
+        <label class="filter-toggle" data-layer="tenant-rep">
+          <input type="checkbox" checked />
+          <span class="filter-swatch"><span class="swatch-diamond-filled"></span></span>
+          <span class="filter-text">
+            <div class="filter-name">Tenants Represented</div>
+            <div class="filter-count" data-count="tenant-rep">—</div>
+          </span>
+        </label>
+        <label class="filter-toggle" data-layer="buyer-rep">
+          <input type="checkbox" checked />
+          <span class="filter-swatch"><span class="swatch-diamond-outline"></span></span>
+          <span class="filter-text">
+            <div class="filter-name">Buyers Represented</div>
+            <div class="filter-count" data-count="buyer-rep">—</div>
+          </span>
+        </label>
+      </div>
+    </aside>
+
+    <div id="map"></div>
+  </div>
+</section>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
+<script>
+/* =========================================================================
+   LIVE DATA — pulled from Airtable at build time.
+   `scripts/build-map-data.js` queries each table's "Public — Map Pins" view
+   and writes ./public/map-data.json. The browser only ever loads that JSON,
+   so no API key is exposed and there is no Airtable rate-limit risk.
+   ========================================================================= */
+async function loadData() {
+  const res = await fetch('/map-data.json');
+  if (!res.ok) throw new Error('Could not load map-data.json (run the build step).');
+  return await res.json();
+}
+
+// ===== Pin styling per layer =====
+const LAYER_STYLES = {
+  'active-sale':   { html: '<div class="pin-icon"><div class="dot-filled"></div></div>',     label: 'Active — For Sale' },
+  'active-lease':  { html: '<div class="pin-icon"><div class="dot-filled"></div></div>',     label: 'Active — For Lease' },
+  'closed-sale':   { html: '<div class="pin-icon"><div class="dot-outline"></div></div>',    label: 'Sold' },
+  'closed-lease':  { html: '<div class="pin-icon"><div class="dot-outline"></div></div>',    label: 'Leased' },
+  'tenant-rep':    { html: '<div class="pin-icon"><div class="diamond-filled"></div></div>', label: 'Tenant Represented' },
+  'buyer-rep':     { html: '<div class="pin-icon"><div class="diamond-outline"></div></div>',label: 'Buyer Represented' },
+};
+
+// ===== Initialize map =====
+const map = L.map('map', {
+  center: [31.1, -99.5], // Center of Texas
+  zoom: 6,
+  minZoom: 5,
+  maxZoom: 17,
+  zoomControl: true,
+  scrollWheelZoom: true,
+});
+
+// CartoDB Positron — a quiet, light tile layer that doesn't fight the brand
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+  subdomains: 'abcd',
+  maxZoom: 19,
+}).addTo(map);
+
+// Label layer (placed above pins via z-index would be ideal, but Leaflet draws labels under markers by default; this looks clean)
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
+  attribution: '',
+  subdomains: 'abcd',
+  maxZoom: 19,
+  pane: 'shadowPane',
+}).addTo(map);
+
+// ===== Render pins =====
+const layerGroups = {}; // layer key -> L.layerGroup
+
+function popupHtml(pin) {
+  return `
+    ${pin.image ? `<img class="popup-img" src="${pin.image}" alt="" />` : ''}
+    <div class="popup-body">
+      <div class="popup-tag">${pin.label || LAYER_STYLES[pin.layer].label}${pin.city ? ' &middot; ' + pin.city : ''}</div>
+      <div class="popup-title">${pin.name}</div>
+      ${pin.headline ? `<div class="popup-meta">${pin.headline}</div>` : ''}
+      ${pin.meta?.primary ? `<div class="popup-detail"><strong>${pin.meta.primary}</strong></div>` : ''}
+      ${pin.meta?.secondary ? `<div class="popup-detail">${pin.meta.secondary}</div>` : ''}
+    </div>
+  `;
+}
+
+async function init() {
+  const data = await loadData();
+
+  // Initialize layer groups
+  Object.keys(LAYER_STYLES).forEach(key => {
+    layerGroups[key] = L.layerGroup().addTo(map);
+  });
+
+  // Add pins and count by layer
+  const counts = {};
+  data.forEach(pin => {
+    if (!LAYER_STYLES[pin.layer]) return;
+    counts[pin.layer] = (counts[pin.layer] || 0) + 1;
+
+    const icon = L.divIcon({
+      html: LAYER_STYLES[pin.layer].html,
+      className: '',
+      iconSize: [18, 18],
+      iconAnchor: [9, 9],
+      popupAnchor: [0, -10],
+    });
+    const marker = L.marker([pin.lat, pin.lng], { icon })
+      .bindPopup(popupHtml(pin), { closeButton: true, autoPan: true, maxWidth: 280 });
+    layerGroups[pin.layer].addLayer(marker);
+  });
+
+  // Update counts in the sidebar
+  Object.entries(counts).forEach(([k, v]) => {
+    const el = document.querySelector(`[data-count="${k}"]`);
+    if (el) el.textContent = `${v} ${v === 1 ? 'location' : 'locations'}`;
+  });
+  // Zero-counts
+  document.querySelectorAll('[data-count]').forEach(el => {
+    if (el.textContent === '—') el.textContent = '0 locations';
+  });
+
+  // Apply any custom per-client labels (from AIRTABLE_LAYER_MAP) to the legend
+  const labelByLayer = {};
+  data.forEach(p => { if (p.label && !labelByLayer[p.layer]) labelByLayer[p.layer] = p.label; });
+  document.querySelectorAll('.filter-toggle').forEach(label => {
+    const k = label.dataset.layer;
+    if (labelByLayer[k]) {
+      const nameEl = label.querySelector('.filter-name');
+      if (nameEl) nameEl.textContent = labelByLayer[k];
+    }
+  });
+
+  // Wire up filter toggles
+  document.querySelectorAll('.filter-toggle').forEach(label => {
+    const layerKey = label.dataset.layer;
+    const checkbox = label.querySelector('input');
+    checkbox.addEventListener('change', () => {
+      if (checkbox.checked) {
+        layerGroups[layerKey].addTo(map);
+        label.classList.remove('off');
+      } else {
+        map.removeLayer(layerGroups[layerKey]);
+        label.classList.add('off');
+      }
+    });
+  });
+
+  // Fit map to bounds of all pins
+  if (data.length) {
+    const bounds = L.latLngBounds(data.map(d => [d.lat, d.lng]));
+    map.fitBounds(bounds, { padding: [50, 50] });
+  }
+}
+
+init();
+</script>
+</body>
+</html>
